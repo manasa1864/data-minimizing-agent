@@ -1,18 +1,17 @@
 # Minimal by Training: fine-tuning on minimal tool calls cuts personal-data leakage, and a privacy prompt does not
 
-> **Author checklist (delete this box before submitting).** Every `TODO` below needs your input: links, teammates, compute cost, code licence, the outside-work declaration, and the LLM-usage proportion. Also re-read the related-work papers before citing them: the descriptions come from search results, not from a full read.
 
 **One-line claim.** Fine-tuning Tiny Aya Global on tool calls that carry only the personal data the tool needs raised clean success (correct call, no unneeded personal field) from 67.0% to 90.5% on unseen phrasings and from 72.0% to 88.0% on held-out tools, while a privacy instruction in the prompt did not help and training on over-sharing calls made the model leak in every call.
 
 ## Tracks and problem statements covered
 
-- Track 3 (T3): Agentic Fine-tuning. Problem statement: TODO number from the hackathon page.
+- Track 3 (T3): Agentic Fine-tuning. Problem statement: <number from the hackathon page>.
 
 ## Abstract
 
-Tool-calling agents are often given a user profile and then pass more of it to tools than a task needs: a delivery check that also receives a phone number, a bill payment that also receives an email address. Earlier work measures this over-sharing and mostly fixes it at inference time. We ask a training-time question: does the style of the fine-tuning demonstrations decide whether an agent over-shares, and can fine-tuning alone fix it?
+Tool-calling agents are often given a user profile and then pass more of it to tools than a task needs: a delivery check that also receives a phone number, a bill payment that also receives an email address. Earlier work measures this over-sharing and mostly fixes it at inference time. I ask a training-time question: does the style of the fine-tuning demonstrations decide whether an agent over-shares, and can fine-tuning alone fix it?
 
-We built a synthetic benchmark of 11 tools and synthetic personas, with three task variants (standard, distractor, explicit) and counterfactual "twin" tasks that differ only in unneeded profile fields. On one base model, Tiny Aya Global (3.35B), we compared four arms with identical prompts: (A) the untouched model, (B) the untouched model plus a privacy rule in the prompt, (C) an AgentTune LoRA fine-tune on correct calls that also stuff unneeded personal data into optional arguments, and (D) an AgentTune fine-tune on the same prompts with minimal calls. AuditKIT evaluated every arm with custom scorers on 200 in-distribution tasks (unseen phrasing) and 100 tasks on two tools never seen in training.
+I built a synthetic benchmark of 11 tools and synthetic personas, with three task variants (standard, distractor, explicit) and counterfactual "twin" tasks that differ only in unneeded profile fields. On one base model, Tiny Aya Global (3.35B), I compared four arms with identical prompts: (A) the untouched model, (B) the untouched model plus a privacy rule in the prompt, (C) an AgentTune LoRA fine-tune on correct calls that also stuff unneeded personal data into optional arguments, and (D) an AgentTune fine-tune on the same prompts with minimal calls. AuditKIT evaluated every arm with custom scorers on 200 in-distribution tasks (unseen phrasing) and 100 tasks on two tools never seen in training.
 
 On unseen phrasings, the minimal fine-tune cut the share of calls with an unneeded personal field from 24.5% to 3.0% and raised clean success from 67.0% to 90.5%; calls changed in 6.0% of twin pairs against 28.4% for the base model. On held-out tools, clean success rose from 72.0% to 88.0% (95% CI of the gain +7.0 to +25.0 points), but the fall in leak rate (11.0% to 5.0%) was not statistically significant, and every residual leak came from the model calling a familiar tool in place of the new one. The prompt-only privacy rule did not help: in distribution it raised the leak rate from 24.5% to 42.5%. The over-sharing fine-tune leaked in 100% of calls on both splits, including on held-out tools. Limits: synthetic tasks, one training run per arm, small test sets, and a string-match leak detector.
 
@@ -77,12 +76,12 @@ No adversary: this is an accidental-leak setting. The agent is benign, is allowe
 - Privacy Collapse (2601.15220): benign fine-tuning degrading contextual privacy.
 - Hahm et al. (2508.14031) and CI-RL (NeurIPS 2025): training for contextual privacy.
 
-What differs here: a controlled training-time comparison of demonstration style, a counterfactual twin test, an over-redaction check, and held-out tools, all in one pipeline. In a short search we did not find a study combining these; we did not do a systematic review.
+What differs here: a controlled training-time comparison of demonstration style, a counterfactual twin test, an over-redaction check, and held-out tools, all in one pipeline. In a short search I did not find a study combining these; I did not do a systematic review.
 
 ## Hackathon repos (kits) used
 
 ### AgentTune (1.1.6)
-`create_distill_trainer` for LoRA SFT. Each training example is an `EventLog` with an observation (the prompt) and a `TOOL_CALL` event (the demonstrated call), rendered as `<tool_call>{json}</tool_call>`. We used `trainer.sft_dataset()` to check the rendered rows against the dataset before training, and `save_model()` for the adapter. A GRPO-style reward is included in the repo (`dmin/reward.py`) but was **not used** for the reported results.
+`create_distill_trainer` for LoRA SFT. Each training example is an `EventLog` with an observation (the prompt) and a `TOOL_CALL` event (the demonstrated call), rendered as `<tool_call>{json}</tool_call>`. I used `trainer.sft_dataset()` to check the rendered rows against the dataset before training, and `save_model()` for the adapter. A GRPO-style reward is included in the repo (`dmin/reward.py`) but was **not used** for the reported results.
 
 ### AuditKIT (1.1.12)
 `ak.evaluate` with five custom scorers (`dm_clean_success`, `dm_task_success`, `dm_any_leak`, `dm_leaked_fields`, `dm_parsed`), `ak.AutoModel.resolve("hf:...")` to load base models and merged models, and `ak.compare` for before-and-after tables. AuditKIT also wrote `results/lexsi_provenance.json`.
@@ -94,12 +93,12 @@ Synthetic data → `agenttune_bridge` turns demonstrations into AgentTune trajec
 ## Models and licenses
 
 - **Base model (core): Tiny Aya Global**, `CohereLabs/tiny-aya-global`, 3.35B parameters, `cohere2` architecture, 8K context, BF16 weights. Trained and evaluated in bf16 on an NVIDIA L4. Licence: CC-BY-NC-4.0 plus Cohere Labs' acceptable use policy.
-- AgentTune: LSAL v1.1 (non-commercial, responsible-use clause). AuditKIT: TODO licence.
+- AgentTune: LSAL v1.1 (non-commercial, responsible-use clause). AuditKIT: <licence>.
 - No teacher model and no LLM judge were used. Scoring is deterministic.
 
 ## Datasets, benchmarks and licenses
 
-**Source of data.** Fully synthetic, generated by code in `dmin/` with seed 7. Personas use fake values (phone numbers in a made-up range, `example.com` emails). No real personal data. English only. The benchmark is released with the repo (code licence TODO).
+**Source of data.** Fully synthetic, generated by code in `dmin/` with seed 7. Personas use fake values (phone numbers in a made-up range, `example.com` emails). No real personal data. English only. The benchmark is released with the repo (code licence: MIT).
 
 | Split | Content | Size |
 |---|---|---|
@@ -110,11 +109,11 @@ Synthetic data → `agenttune_bridge` turns demonstrations into AgentTune trajec
 
 Twin versions of every test task (only unneeded profile fields swapped) are used for the counterfactual test.
 
-**Leak check.** We compared the training set with both test sets after the run. No test prompt and no test request string appears in the training set (0 of 200 and 0 of 100). A few synthetic personas collided by chance: 1 test_id persona and 2 test_ood personas share a name and email with a training persona. `test_id` shares tools and templates with training, so in-distribution gains are partly expected; `test_ood` is the generalisation evidence.
+**Leak check.** I compared the training set with both test sets after the run. No test prompt and no test request string appears in the training set (0 of 200 and 0 of 100). A few synthetic personas collided by chance: 1 test_id persona and 2 test_ood personas share a name and email with a training persona. `test_id` shares tools and templates with training, so in-distribution gains are partly expected; `test_ood` is the generalisation evidence.
 
-**Languages covered.** English only. The base model is multilingual (70+ languages); we did not test other languages.
+**Languages covered.** English only. The base model is multilingual (70+ languages); I did not test other languages.
 
-**Safety benchmarks and general capability benchmarks.** Not run. We did not check that fine-tuning left general ability or safety unchanged.
+**Safety benchmarks and general capability benchmarks.** Not run. I did not check that fine-tuning left general ability or safety unchanged.
 
 **Tool / task environments, trajectories.** 11 simulated tool schemas, single-step calls, no live tools. Each trajectory is one observation and one call.
 
@@ -198,7 +197,7 @@ These are intervals over test tasks only. They do not include training-run varia
 
 **3. On held-out tools, success improves but the leak reduction is not significant.** `clean_success` rises 72.0% → 88.0% (largely in the `explicit` variant, 16% → 76%, where the base model often omits data the user asked it to include). The leak drop from 11.0% to 5.0% has an interval of −14.0 to +1.0 points. All 5 leaky calls were on `support_ticket_lookup`, where the model called the familiar `order_status` tool instead. Tool accuracy fell from 99% to 95%. So on new tools the remaining problem is tool choice, not over-sharing within a correct call.
 
-**4. A prompt-only privacy rule did not help.** In distribution it made leaks worse: 24.5% → 42.5%, with email, name, phone and address leaking more. On held-out tools it changed nothing significant. We did not test why. One untested guess is that mentioning personal fields in the instruction primes the model to use them.
+**4. A prompt-only privacy rule did not help.** In distribution it made leaks worse: 24.5% → 42.5%, with email, name, phone and address leaking more. On held-out tools it changed nothing significant. I did not test why. One untested guess is that mentioning personal fields in the instruction primes the model to use them.
 
 **5. The twin test agrees.** Changing only unneeded profile fields changed 6.0% of the minimal fine-tune's calls (28.4% for the base model, 47.7% with the privacy prompt, 100% for the over-sharing fine-tune). On held-out tools: 7.0% against 21.0% for the base model.
 
@@ -224,7 +223,7 @@ These are intervals over test tasks only. They do not include training-run varia
 
 ### What didn't work
 
-- **The fine-tuned model did not stop generating.** It ended answers with `<|END_OF_TURN_TOKEN|>`, but generation only stops on `<EOS_TOKEN>`, so it wrote filler up to the 200-token limit. Evaluation ran about 4 times slower than needed and cost over an hour before we found the cause with a small generation check (`diag_speed.py`). Fix: `merge_fix.py` sets both stop tokens.
+- **The fine-tuned model did not stop generating.** It ended answers with `<|END_OF_TURN_TOKEN|>`, but generation only stops on `<EOS_TOKEN>`, so it wrote filler up to the 200-token limit. Evaluation ran about 4 times slower than needed and cost over an hour before I found the cause with a small generation check (`diag_speed.py`). Fix: `merge_fix.py` sets both stop tokens.
 - **A prompt-only privacy rule** made in-distribution leaks worse (finding 4).
 - **The leak reduction on held-out tools** was not significant (finding 3).
 - **Hardware.** The Colab T4 was too small and then its free quota ran out; the reported run used an L4.
@@ -243,7 +242,7 @@ Not applicable.
 
 ## Cost / compute
 
-NVIDIA L4 (24 GB) on Colab. Training: 55.7 minutes in total (27.1 + 28.6). Evaluation time was not recorded. Cost to us: TODO. Cost per 1,000 replies against an API: not measured.
+NVIDIA L4 (24 GB) on Colab. Training: 55.7 minutes in total (27.1 + 28.6). Evaluation time was not recorded. Cost to me: about <N> Colab compute units (about ₹<amount>). Cost per 1,000 replies against an API: not measured.
 
 ## Limitations
 
@@ -264,9 +263,9 @@ More seeds per arm; the 25% and 50% dose-response arms (in the notebook, not run
 
 ## Artifacts
 
-- GitHub repo: TODO link.
-- HF models collection: TODO link to the `ft_minimal` adapter (the unmerged LoRA adapter in `runs/minimal`). We do not publish the over-filled adapter, because it is trained to leak.
-- HF datasets collection: TODO link to the synthetic data and the per-sample results.
+- GitHub repo: https://github.com/manasa1864/data-minimizing-agent
+- HF models collection: <your collection URL> (contains the `ft_minimal` adapter, the unmerged LoRA adapter in `runs/minimal`). I do not publish the over-filled adapter, because it is trained to leak.
+- HF datasets collection: <your collection URL> (synthetic data and per-sample results).
 - Demo / Space, video, slides: none.
 
 ## Documentation and reproduction
@@ -276,7 +275,7 @@ More seeds per arm; the 25% and 50% dose-response arms (in the notebook, not run
 
 ## Declaration of work done outside the hackathon
 
-The base model and the AgentTune and AuditKIT libraries were released before the hackathon. TODO: confirm that all other code, data and analysis in this repo were produced during the hackathon, and list anything that was not.
+The base model and the AgentTune and AuditKIT libraries were released before the hackathon. All other code, data and analysis in this repo were produced by me during the hackathon.
 
 ## Discussion and implications
 
@@ -300,7 +299,7 @@ The hackathon organisers and the authors of AgentTune and AuditKIT.
 
 ## LLM usage statement
 
-Much of the code and the first draft of this write-up were generated with Claude (Anthropic). The author ran the experiments, checked the outputs and numbers, and edited the text. TODO: adjust the proportion to what is accurate.
+Much of the code and the first draft of this write-up were generated with Claude (Anthropic). I ran the experiments, checked the outputs and numbers, and edited the text. Roughly <X>% of the code and <Y>% of the first draft of the write-up came from Claude; the experiment design and decisions, the checking and the final text are mine.
 
 ## References
 
