@@ -288,11 +288,11 @@ See "With more credits". The most useful next step is repeating the main compari
 
 ## Teammates tagged
 
-TODO.
+None. This is a solo submission; the only participant is Manasa Gopisetty.
 
 ## Author contributions
 
-TODO.
+Manasa Gopisetty (solo participant) designed and ran the experiments, checked the outputs and numbers, and wrote and edited this write-up.
 
 ## Acknowledgements
 
