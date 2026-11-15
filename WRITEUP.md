@@ -264,8 +264,8 @@ More seeds per arm; the 25% and 50% dose-response arms (in the notebook, not run
 ## Artifacts
 
 - GitHub repo: https://github.com/manasa1864/data-minimizing-agent
-- HF models collection: <your collection URL> (contains the `ft_minimal` adapter, the unmerged LoRA adapter in `runs/minimal`). I do not publish the over-filled adapter, because it is trained to leak.
-- HF datasets collection: <your collection URL> (synthetic data and per-sample results).
+- HF models collection: https://huggingface.co/collections/Mango-1864/minimal-by-training-models (contains the `ft_minimal` adapter, the unmerged LoRA adapter in `runs/minimal`). I do not publish the over-filled adapter, because it is trained to leak.
+- HF datasets collection: https://huggingface.co/collections/Mango-1864/minimal-by-training-datasets (synthetic data and per-sample results).
 - Demo / Space, video, slides: none.
 
 ## Documentation and reproduction
