@@ -1,0 +1,28 @@
+{
+ "base_model": "CohereLabs/tiny-aya-global",
+ "leak_frac": 1.0,
+ "n_demonstrations": 600,
+ "n_overfilled": 600,
+ "agenttune_version": "1.1.6",
+ "train_seconds": 1716.2,
+ "args": {
+  "model": "CohereLabs/tiny-aya-global",
+  "data": "data/train.jsonl",
+  "leak_frac": 1.0,
+  "out": "runs/overfilled",
+  "epochs": 3.0,
+  "max_steps": -1,
+  "lr": 0.0002,
+  "batch_size": 1,
+  "grad_accum": 16,
+  "max_length": 1536,
+  "no_grad_ckpt": false,
+  "lora_r": 16,
+  "lora_targets": null,
+  "dtype": "auto",
+  "limit": null,
+  "seed": 7,
+  "preview": false
+ },
+ "train_loss": 0.47149239977200824
+}

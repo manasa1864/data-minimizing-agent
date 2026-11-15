@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Secrets: never commit tokens
+.env
+*.env
+hf_token*
+*token*.txt
+
+# Model weights and archives (publish the adapter on Hugging Face instead)
+*.safetensors
+*.bin
+*.pt
+*.gguf
+*.zip
+runs/*_merged/
+
+# Keep each run's small training record, ignore everything else in runs/
+runs/*/*
+!runs/*/dmin_run_info.json
+
+# (this also keeps the adapter trained to leak personal data, runs/overfilled, out of git)
+
+# OS / editor
+.DS_Store
+.vscode/

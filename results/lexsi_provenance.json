@@ -1,0 +1,20 @@
+{
+  "schema": "lexsi.provenance/1",
+  "library": "auditkit",
+  "version": "1.1.12",
+  "git_sha": null,
+  "created_at": "2026-11-15T13:59:00Z",
+  "base_model": "runs/overfilled_merged",
+  "method": "evaluate",
+  "inputs": [
+    {
+      "kind": "model",
+      "ref": "runs/overfilled_merged",
+      "provenance": null
+    }
+  ],
+  "params": {
+    "run_id": "f3fcb390366b6041",
+    "fingerprint": "f3fcb390366b6041"
+  }
+}
