@@ -23,7 +23,7 @@ What the numbers support (95% paired-bootstrap intervals, in points):
 
 - **In distribution:** the minimal fine-tune cut leaks by 21.5 points (CI -27.5 to -16.0) and raised clean success by 23.5 points (CI +17.5 to +30.0). Calls changed in only 6.0% of counterfactual twin pairs, against 28.4% for the base model.
 - **On held-out tools:** clean success rose by 16.0 points (CI +7.0 to +25.0), but the **drop in leak rate is not statistically significant** (-6.0 points, CI -14.0 to +1.0). All 5 leaky calls were the model calling a familiar tool (`order_status`) instead of the new one (`support_ticket_lookup`).
-- **A prompt-only privacy rule did not help**, and made in-distribution leaks worse (+18.0 points, CI +12.0 to +24.5). No effect on held-out tools. This is one run and we did not test why.
+- **A prompt-only privacy rule did not help**, and made in-distribution leaks worse (+18.0 points, CI +12.0 to +24.5). No effect on held-out tools. This is one run and I did not test why.
 - **The over-filled arm leaks in every call**, on held-out tools too. It was built to do that (every demonstration over-shares), so read it as a demonstration that the behaviour is imitated and transfers, not as a surprise.
 
 The full list of limitations is in `WRITEUP.md`. The main ones: synthetic personas and templated tasks, one seed per arm, small test sets, and a string-match leak detector that misses paraphrased leaks.
@@ -101,7 +101,7 @@ The notebook runs the same steps. Hyperparameters used: 600 demonstrations, 3 ep
 
 ## Licences
 
-Code in this repo: TODO choose a licence. Base model `CohereLabs/tiny-aya-global`: CC-BY-NC-4.0 plus Cohere Labs' acceptable use policy (non-commercial). AgentTune: LSAL v1.1 (non-commercial, with a responsible-use clause). Check each licence before reusing or redistributing.
+Code in this repo: MIT (see LICENSE). Base model `CohereLabs/tiny-aya-global`: CC-BY-NC-4.0 plus Cohere Labs' acceptable use policy (non-commercial). AgentTune: LSAL v1.1 (non-commercial, with a responsible-use clause). AuditKIT: LSAL-1.2 (source-available, noncommercial). Check each licence before reusing or redistributing.
 
 ## Credits
 
